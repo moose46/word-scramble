@@ -67,32 +67,35 @@ def search_row_for_letter(letter, row, rownum):
 
 def search_row_for_word_right_diagonal(word, grid):
     # Start at row x=0, column y=0
-    # then increment x by 1 and set y = 0 back to 0 and increment to x
-    # start a new letter row
-    rownum = 0
-    gridxy = []
-    gridrow = []
     letters = ""
-    x = 0
-    y = 0
-    column_number = 0
-    y_len = len(grid) - 1
-    letters_found = []
-    # letters_found.append(grid[x][y])
-    # looking for (0,0) (0,1) (1,0) (0,2) (1,1) (2,0) (0,3) (1,2) (2,2) (3,1) (4,0)
-    for x in range(0, len(grid[0])):  # count up accross
-        for column_number in range(0, len(grid[0]) - (len(grid[0]) - x)):
-            print(f"({x},{column_number})={grid[x][column_number]}")
-            # column_number += 1
-        # for y in range(0, len(grid)):
-        # for y in range(0, x, -1):
-        #     for x1 in range(y, x, -1):  # down
-        #         letters += grid[x1][y]
-        # letters_found.append(letters)
-        # letters = ""
+    for z in range(0, len(grid[0])):  # left row numbers 0,1,2,3 ...
+        # print(f"z=({z},0)", end="")
+        letters += grid[z][0]
+        x = z - 1
+        for y in range(1, (z - len(grid[0])) + len(grid[0]) + 1):
+            # print(f"({x},{y})", end="")
+            letters += grid[x][y]
+            x -= 1
+            matches = re.findall(word, letters)
+            if matches:
+                print(f"\n\nFound Match ({z},{y}) {matches}")
 
-    gridrow.append(letters)
-    print(f"left to right, down and accross {letters}")
+                return letters
+    # ======================================================
+    letters = ""
+    # x = 0
+    for z in range(0, 20):  # bottom column numbers
+        # letters += grid[19][0]
+        x = z
+        for y in range(19, -1, -1):
+            # print(f" z={z} x={x} y={y} {letters}", end="")
+            letters += grid[x][y]
+            x += 1
+            # print(f"{grid[x][y]}", end="")
+        print(f"-- {letters}")
+        letters = ""
+        print()
+    exit()
 
 
 # Press the green button in the gutter to run the script.
