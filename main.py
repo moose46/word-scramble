@@ -99,22 +99,57 @@ def search_row_for_word_right_diagonal(word, grid):
 
 
 def show(grid):
-    for row in grid:
-        for letter in row:
-            print(letter, end=" ")
-        print()
-    row = 19
-    letter = 0
+    # for row in grid:
+    #     for letter in row:
+    #         print(letter, end=" ")
+    #     print()
+    # y = 19
+    # letter = 0
     letters_found = []
     print("==========================")
-    for column in range(0, 19):
-        while row > 0:
-            letters_found.append((row, grid[letter][column]))
-            print(f"{grid[row][ letter]}", end=" ")
-            letter += 1
-            row -= 1
-        row = 19
-        letter = column
+    # for bottom_column in range(0, 19):
+    #     letters_found.clear()
+    #     for x in range(19, 0, -1):
+    #         for y in range(0, 19 - x + 1):
+    #             letters_found.append((x, y, grid[x][y]))
+    #             print(f"{grid[x][y]}", end=" ")
+    #     print()
+    # for x in range(19, 0, -1):
+    letters_found.clear()
+    for z in range(0, len(grid[0])):
+        x = 19 - z
+        while x >= 0:
+            y = 0
+            while y <= 19:
+                letters_found.append((x, y, grid[x][y]))
+                x -= 1
+                y += 1
+            letters_found.clear()
+
+
+def test_grid_coordinates(grid):
+    y = 0
+    x = 0
+    z = 0
+    # upper left to lower left
+    for z in range(0, len(grid[0])):
+        x_loop = z
+        while x < x_loop:
+            y = 0
+            y_loop = len(grid) - x
+            while y < y_loop:
+                try:
+                    print(grid[x][y], end="")
+                except IndexError as e:
+                    print(f"\nx={x}, y={y}, z={z} {e}")
+                    exit()
+                y += 1
+                x += 1
+            print()
+
+        x = z
+
+    exit()
 
 
 # Press the green button in the gutter to run the script.
@@ -140,6 +175,8 @@ if __name__ == "__main__":
         "DEON",  # REVERSE TEST
         "NOED",  # REVERSE TEST
     ]
+    test_grid_coordinates(fall2025.words2025)
+
     show(fall2025.words2025)
     exit()
     for word in words_fall2025:
