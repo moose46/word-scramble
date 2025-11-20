@@ -98,6 +98,25 @@ def search_row_for_word_right_diagonal(word, grid):
     exit()
 
 
+def show(grid):
+    for row in grid:
+        for letter in row:
+            print(letter, end=" ")
+        print()
+    row = 19
+    letter = 0
+    letters_found = []
+    print("==========================")
+    for column in range(0, 19):
+        while row > 0:
+            letters_found.append((row, grid[letter][column]))
+            print(f"{grid[row][ letter]}", end=" ")
+            letter += 1
+            row -= 1
+        row = 19
+        letter = column
+
+
 # Press the green button in the gutter to run the script.
 if __name__ == "__main__":
     validateData(fall2025.words2025)
@@ -121,6 +140,8 @@ if __name__ == "__main__":
         "DEON",  # REVERSE TEST
         "NOED",  # REVERSE TEST
     ]
+    show(fall2025.words2025)
+    exit()
     for word in words_fall2025:
         search_row_for_word_lr(word, fall2025.words2025)
         search_row_for_word_rl(word, fall2025.words2025)
