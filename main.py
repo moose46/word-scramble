@@ -148,6 +148,15 @@ def test_grid_coordinates(grid):
             print()
 
         x = z
+    row = 0
+    column = 0
+    for column in range(0, len(grid)):
+        for row in range(0, 20 - column):
+            print(f"(c={column},r={row},{grid[row][column]})")
+            column += 1
+        print("=================================")
+    #
+    # x = z
 
     exit()
 
