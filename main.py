@@ -127,10 +127,12 @@ def show(grid):
             letters_found.clear()
 
 
-def test_grid_coordinates(grid):
+def test_grid_coordinates(grid, word):
     y = 0
     x = 0
     z = 0
+    letters = ""
+    letters_found = []
     # upper left to lower left
     for z in range(0, len(grid[0])):
         x_loop = z
@@ -139,26 +141,49 @@ def test_grid_coordinates(grid):
             y_loop = len(grid) - x
             while y < y_loop:
                 try:
-                    print(grid[x][y], end="")
+                    letters += grid[x][y]
+                    # letters_found.append(grid[x][y])
+                    # print(grid[x][y], end="")
                 except IndexError as e:
                     print(f"\nx={x}, y={y}, z={z} {e}")
                     exit()
                 y += 1
                 x += 1
-            print()
+            # print(letters)
+            matches = re.findall(word, letters)
+            if matches:
+                print(f"\n\nFound Match (column={z},row={y}) {matches}")
+                return letters
+
+            letters = ""
+        # letters_found.clear()
 
         x = z
     row = 0
     column = 0
     for column in range(0, len(grid)):
         for row in range(0, 20 - column):
-            print(f"(c={column},r={row},{grid[row][column]})")
+            # print(f"(c={column},r={row},{grid[row][column]})", end=" ")
             column += 1
-        print("=================================")
-    #
-    # x = z
-
-    exit()
+    column = 0
+    # count row up from 19 to 0
+    for row in range(len(grid[0]) - 1, 0, -1):
+        # row starts at 19
+        # columns start at len(grid) - row
+        for column in range(0, len(grid) - row):
+            try:
+                letters += grid[row][column]
+                # print(f"(c={column},row={row},{grid[row][column]})", end=" ")
+                row += 1
+            except IndexError as e:
+                print(f"\ncolumn={column}, row={row} {e}")
+                exit()
+        # print(f"{letters}")
+        matches = re.findall(word, letters)
+        if matches:
+            print(f"\n\nFound Match ({z},{y}) {matches}")
+            return letters
+        letters = ""
 
 
 # Press the green button in the gutter to run the script.
@@ -184,12 +209,11 @@ if __name__ == "__main__":
         "DEON",  # REVERSE TEST
         "NOED",  # REVERSE TEST
     ]
-    test_grid_coordinates(fall2025.words2025)
 
-    show(fall2025.words2025)
-    exit()
+    # show(fall2025.words2025)
     for word in words_fall2025:
-        search_row_for_word_lr(word, fall2025.words2025)
-        search_row_for_word_rl(word, fall2025.words2025)
-        search_row_for_word_right_diagonal(word, fall2025.words2025)
+        test_grid_coordinates(fall2025.words2025, word)
+        # search_row_for_word_lr(word, fall2025.words2025)
+        # search_row_for_word_rl(word, fall2025.words2025)
+        # search_row_for_word_right_diagonal(word, fall2025.words2025)
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
