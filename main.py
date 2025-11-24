@@ -6,6 +6,8 @@ import re
 # Press Ctrl+F5 to execute it or replace it with your code.
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
 import fall2025
+import summer2025
+from summer2025 import words_summer2025
 
 words = ["afterburner"]
 
@@ -33,21 +35,23 @@ def search_word_by_row(word, grid):
     rownum = 0
     # pattern = re.compile(r"{word.upper()}")
     for row in grid:
-        matches = re.findall(word, row)
+        matches = re.findall(word["word"], row)
         rownum += 1
         if matches:
             print(
-                f"{"search_word_by_row":42} ({rownum:02},{row.index(word):02}) {matches}"
+                f"{"search_word_by_row":42} ({rownum:02},{row.index(word["word"]):02}) {matches}"
             )
+            word["found"] = True
 
 
 def search_row_for_word_rl(word, grid):
     rownum = 0
     for row in grid:
-        matches = re.findall(word, row[::-1])
+        matches = re.findall(word["word"], row[::-1])
         rownum += 1
         if matches:
-            print(f"ROW {rownum}: {row[::-1]} {word} {matches}")
+            print(f"ROW {rownum}: {row[::-1]} {word["word"]} {matches}")
+            word["found"] = True
 
 
 def search_row_for_letter(letter, row, rownum):
@@ -84,14 +88,12 @@ def show(grid):
 
 
 def bottom_left_up(grid, word):
-    y = 0
     x = 0
-    z = 0
     letters = ""
     letters_found = []
     # print(f"looking for {word}")
     # upper left to lower left
-    for z in range(0, len(grid[0])):
+    for z in range(0, len(grid)):
         x_loop = z
         while x < x_loop:
             y = 0
@@ -107,20 +109,26 @@ def bottom_left_up(grid, word):
                 y += 1
                 x += 1
             # print(letters)
-            matches = re.findall(word, letters[::-1])
+            matches = re.findall(word["word"], letters[::-1])
             if matches:
-                x = letters.index(word[::-1]) + len(word) - 1
+                x = letters.index(word["word"][::-1]) + len(word["word"]) - 1
                 print(
-                    f"{"bottom_left_up [::-1]":42} ({x:02},{x + len(word):02}) {matches}"
+                    f"{"bottom_left_up [::-1]":42} ({x:02},{x + len(word["word"]):02}) {matches}"
                 )
+                word["found"] = True
                 return letters
-            matches = re.findall(word, letters)
+            matches = re.findall(word["word"], letters)
             if matches:
                 # "XXXXXXTESTPILOT"
                 # "TESTPILOTXXXXXX"
-                x1 = letters.index(word)
-                y1 = len(grid[0]) - letters[::-1].index(word[::-1]) - len(word)
+                x1 = letters.index(word["word"])
+                y1 = (
+                    len(grid[0])
+                    - letters[::-1].index(word["word"][::-1])
+                    - len(word["word"])
+                )
                 print(f"{"bottom_left_up":42} ({x1:02},{y1:02}) {matches}")
+                word["found"] = True
                 return letters
             # print(f"{letters}")
             letters = ""
@@ -142,37 +150,43 @@ def search_word_left_to_right_and_down(grid, word):
         for row in range(0, len(grid) - column):
             letters += grid[row][column_loop]
             column_loop += 1
-        matches = re.findall(word, letters)
+        matches = re.findall(word["word"], letters)
         if matches:
-            x = letters.index(word)
+            x = letters.index(word["word"])
             print(
-                f"{"search_word_left_to_right_and_down":42} ({letters.index(word) + column:02},{x:02}) {matches}"
+                f"{"search_word_left_to_right_and_down":42} ({letters.index(word["word"]) + column:02},{x:02}) {matches}"
             )
-        matches = re.findall(word, letters[::-1])
+            word["found"] = True
+        matches = re.findall(word["word"], letters[::-1])
         if matches:
             print(
                 f"{"search_word_left_to_right_and_down":42} Reverse Found Match (column={column_loop},row={row}) {matches}"
             )
+            word["found"] = True
         letters = ""
     # print(letters)
 
 
 def search_word_by_column(grid, word):
+    grid_height = len(grid)
+    grid_width = len(grid[0])
     letters = ""
-    for y in range(0, 19):
-        for x in range(0, 20):
+    for y in range(0, grid_width):
+        for x in range(0, grid_height):
             letters += grid[x][y]
         # print(f"{letters}")
-        matches = re.findall(word, letters)
+        matches = re.findall(word["word"], letters)
         if matches:
             print(
-                f"{"search_word_by_column":42} ({y:02},{letters.index(word):02}) {matches}"
+                f"{"search_word_by_column":42} ({y:02},{letters.index(word["word"]):02}) {matches}"
             )
-        matches = re.findall(word, letters[::-1])
+            word["found"] = True
+        matches = re.findall(word["word"], letters[::-1])
         if matches:
             print(
-                f"{"search_word_by_column [::-1]":42} ({y:02},{19 - letters[::-1].index(word):02}) {matches}"
+                f"{"search_word_by_column [::-1]":42} ({y:02},{19 - letters[::-1].index(word["word"]):02}) {matches}"
             )
+            word["found"] = True
         letters = ""
 
 
@@ -180,6 +194,7 @@ def bottom_right_up(grid, word):
     y = 19
     x = 19
     grid_len = len(grid[0])
+    grid_height = len(grid)
     letters = ""
     # columns count down from 19 to 0
     for cnt in range(20, -1, -1):
@@ -188,36 +203,38 @@ def bottom_right_up(grid, word):
             letters += grid[x][y]
             y -= 1
         # print(f"{letters}")
-        matches = re.findall(word, letters)
+        matches = re.findall(word["word"], letters)
         if matches:
-            x = letters.index(word)
-            print(f"{"bottom_right_up":42} ({letters.index(word) + y:02},) {matches}")
-        matches_reverse = re.findall(word, letters[::-1])
+            x = letters.index(word["word"])
+            print(
+                f"{"bottom_right_up":42} ({letters.index(word["word"]) + y:02},) {matches}"
+            )
+        matches_reverse = re.findall(word["word"], letters[::-1])
         if matches_reverse:
             print(f"{"bottom_right_up [::-1]":42} ({y:02},{x:02}) {matches_reverse}")
+            word["found"] = True
         letters = ""
 
 
 # Press the green button in the gutter to run the script.
 if __name__ == "__main__":
     validatedata(fall2025.words2025)
-    # find3chars("int", fall2025.words2025)
     words_fall2025 = [
-        "AFTERBURN",
-        "BATMAN",
-        "INTERCEPTOR",
-        "FLIGHTENGINEER",
-        "FOKKERTRIPLANE",
-        "GROUNDSUPPORT",
-        "MONOPLANE",
-        "PURPLEHEART",
-        "SHOOTINGSTAR",
-        "SPADVII",
-        "STRATOTANKER",
-        "TAYNINHVILLAGE",
-        "TESTPILOT",
-        "TURBINE",
-        "WILDWEASEL",
+        {"word": "AFTERBURN", "found": False},
+        {"word": "BATMAN", "found": False},
+        {"word": "INTERCEPTOR", "found": False},
+        {"word": "FLIGHTENGINEER", "found": False},
+        {"word": "FOKKERTRIPLANE", "found": False},
+        {"word": "GROUNDSUPPORT", "found": False},
+        {"word": "MONOPLANE", "found": False},
+        {"word": "PURPLEHEART", "found": False},
+        {"word": "SHOOTINGSTAR", "found": False},
+        {"word": "SPADVII", "found": False},
+        {"word": "STRATOTANKER", "found": False},
+        {"word": "TAYNINHVILLAGE", "found": False},
+        {"word": "TESTPILOT", "found": False},
+        {"word": "TURBINE", "found": False},
+        {"word": "WILDWEASEL", "found": False},
     ]
 
     for word in words_fall2025:
@@ -227,4 +244,34 @@ if __name__ == "__main__":
         bottom_left_up(fall2025.words2025, word)
         bottom_right_up(fall2025.words2025, word)
         search_row_for_word_rl(word, fall2025.words2025)
+    for word in words_fall2025:
+        if not word["found"]:
+            print(f"words_fall2025 {word['word']} not found")
+    summer2025words = [
+        {"word": "BOCKSCAR", "found": False},
+        {"word": "ENOLAGAY", "found": False},
+        {"word": "SENTINEL", "found": False},
+        {"word": "OSCILLOSCOPE", "found": False},
+        {"word": "TEXASTOWERS", "found": False},
+        {"word": "BEETLEBAILY", "found": False},
+        {"word": "GOLITH", "found": False},
+        {"word": "TYPHONZOLA", "found": False},
+        {"word": "TURBULANCE", "found": False},
+        {"word": "WARSAWPACT", "found": False},
+        {"word": "BUSHMASTERS", "found": False},
+        {"word": "VICTORALERT", "found": False},
+        {"word": "BIGSKYTHEORY", "found": False},
+        {"word": "KAMIKAZE", "found": False},
+        {"word": "RADOME", "found": False},
+    ]
+
+    for word in summer2025words:
+        search_word_by_column(summer2025.words_summer2025, word)
+        search_word_by_row(word, summer2025.words_summer2025)
+        search_word_left_to_right_and_down(summer2025.words_summer2025, word)
+        bottom_left_up(summer2025.words_summer2025, word)
+        bottom_right_up(summer2025.words_summer2025, word)
+    for word in summer2025words:
+        if not word["found"]:
+            print(f"summer2025words {word['word']} not found")
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
