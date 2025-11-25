@@ -7,9 +7,8 @@ import re
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
 import fall2025
 import summer2025
-from summer2025 import words_summer2025
 
-words = ["afterburner"]
+# words = ["afterburner"]
 
 
 def validatedata(grid):
@@ -38,20 +37,36 @@ def search_word_by_row(word, grid):
         matches = re.findall(word["word"], row)
         rownum += 1
         if matches:
-            print(
-                f"{"search_word_by_row":42} ({rownum:02},{row.index(word["word"]):02}) {matches}"
-            )
+            y = row.index(word["word"])
+            print(f"{"search_word_by_row":42} ({rownum:02},{y:02}) {matches}")
             word["found"] = True
 
 
 def search_row_for_word_rl(word, grid):
     rownum = 0
     for row in grid:
-        matches = re.findall(word["word"], row[::-1])
-        rownum += 1
+        try:
+            matches = re.findall(word["word"], row[::-1])
+        except Exception as e:
+            print(
+                f"{"search_row_for_word_rl":42} {word["word"]} {row[::-1]} search_row_for_word_rl {e}"
+            )
+            exit(0)
         if matches:
-            print(f"ROW {rownum}: {row[::-1]} {word["word"]} {matches}")
-            word["found"] = True
+            try:
+                # reverse the word, find the start and then add the length of the word to find
+                # the position in the row
+                y = row.index(word["word"][::-1]) + len(word["word"]) - 1
+                print(
+                    # TODO: fix column number
+                    f"{"search_row_for_word_rl [::-1]":42} ({rownum:02},{y:02}) {matches}"
+                )
+                word["found"] = True
+            except IndexError as e:
+                print(
+                    f"{"search_row_for_word_rl":42} ({rownum}, {row[::-1]} {word["word"]} {matches}"
+                )
+        rownum += 1
 
 
 def search_row_for_letter(letter, row, rownum):
@@ -145,7 +160,7 @@ def search_word_left_to_right_and_down(grid, word):
     z = 0
     letters = ""
     letters_found = []
-    for column in range(1, len(grid[0]) - 1):  # columns are accross
+    for column in range(1, len(grid[0]) - 1):  # columns are across
         column_loop = column
         for row in range(0, len(grid) - column):
             letters += grid[row][column_loop]
@@ -193,11 +208,11 @@ def search_word_by_column(grid, word):
 def bottom_right_up(grid, word):
     y = 19
     x = 19
-    grid_len = len(grid[0])
+    grid_width = len(grid[0])
     grid_height = len(grid)
     letters = ""
     # columns count down from 19 to 0
-    for cnt in range(20, -1, -1):
+    for cnt in range(grid_width, -1, -1):
         y = 19
         for x in range(cnt, 20):
             letters += grid[x][y]
@@ -220,7 +235,7 @@ def bottom_right_up(grid, word):
 if __name__ == "__main__":
     validatedata(fall2025.words2025)
     words_fall2025 = [
-        {"word": "AFTERBURN", "found": False},
+        {"word": "AFTERBURNER", "found": False},
         {"word": "BATMAN", "found": False},
         {"word": "INTERCEPTOR", "found": False},
         {"word": "FLIGHTENGINEER", "found": False},
@@ -253,10 +268,10 @@ if __name__ == "__main__":
         {"word": "SENTINEL", "found": False},
         {"word": "OSCILLOSCOPE", "found": False},
         {"word": "TEXASTOWERS", "found": False},
-        {"word": "BEETLEBAILY", "found": False},
-        {"word": "GOLITH", "found": False},
-        {"word": "TYPHONZOLA", "found": False},
-        {"word": "TURBULANCE", "found": False},
+        {"word": "BEETLEBAILEY", "found": False},
+        {"word": "GOLIATH", "found": False},
+        {"word": "TYPHOONZOLA", "found": False},
+        {"word": "TURBULENCE", "found": False},
         {"word": "WARSAWPACT", "found": False},
         {"word": "BUSHMASTERS", "found": False},
         {"word": "VICTORALERT", "found": False},
@@ -271,6 +286,7 @@ if __name__ == "__main__":
         search_word_left_to_right_and_down(summer2025.words_summer2025, word)
         bottom_left_up(summer2025.words_summer2025, word)
         bottom_right_up(summer2025.words_summer2025, word)
+        search_row_for_word_rl(word, summer2025.words_summer2025)
     for word in summer2025words:
         if not word["found"]:
             print(f"summer2025words {word['word']} not found")
