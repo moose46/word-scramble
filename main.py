@@ -202,6 +202,7 @@ def search_word_by_column(grid, word):
                 f"{"search_word_by_column [::-1]":42} ({y:02},{19 - letters[::-1].index(word["word"]):02}) {matches}"
             )
             word["found"] = True
+        print(f"{letters}")
         letters = ""
 
 
